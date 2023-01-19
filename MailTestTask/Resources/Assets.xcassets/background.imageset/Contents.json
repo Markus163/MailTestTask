@@ -1,0 +1,21 @@
+{
+  "images" : [
+    {
+      "filename" : "iPhone 14, iPhone 14 Plus, iPhone 14 Pro Wallpapers Backgrounds 48.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
