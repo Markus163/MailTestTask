@@ -29,6 +29,8 @@ class VerificationViewController: UIViewController {
                                         axis: .vertical,
                                         spacing: 20)
     
+    private let verificationModel = VerificationModel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -49,6 +51,7 @@ class VerificationViewController: UIViewController {
     private func setDelegates() {
         collectionView.dataSource = self
         collectionView.selectMailDelegate = self
+        mailTextfield.textFieldDelegate = self
     }
     
     @objc private func verificationButtonTapped() {
@@ -59,14 +62,40 @@ class VerificationViewController: UIViewController {
 //MARK: - SelectProposedMailProtocol
 extension VerificationViewController: SelectProposedMailProtocol {
     func selectProposedMail(indexPath: IndexPath) {
-        print(indexPath)
+        guard let text = mailTextfield.text else { return }
+        verificationModel.getMailName(text: text)
+        let domainMail = verificationModel.filtredMailArray[indexPath.row]
+        let mailFullName = verificationModel.nameMails + domainMail
+        mailTextfield.text = mailFullName
+        statusLabel.isValid = mailFullName.isValid()
+        verificationButton.isValid = mailFullName.isValid()
+        verificationModel.filtredMailArray = []
+        collectionView.reloadData()
+    }
+}
+
+//MARK: - ActionsMailTextFieldProtocol
+
+extension VerificationViewController: ActionsMailTextFieldProtocol {
+    func typingText(text: String) {
+        statusLabel.isValid = text.isValid()
+        verificationButton.isValid = text.isValid()
+        verificationModel.getFiltredMail(text: text)
+        collectionView.reloadData()
+    }
+    
+    func cleanOutTextField() {
+        statusLabel.setDeafaultsettings()
+        verificationButton.setDeafaultsettings()
+        verificationModel.filtredMailArray = []
+        collectionView.reloadData()
     }
 }
 
 //MARK: - UICollectionViewDataSource
 extension VerificationViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        6
+        verificationModel.filtredMailArray.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -74,6 +103,8 @@ extension VerificationViewController: UICollectionViewDataSource {
         else {
             return UICollectionViewCell()
         }
+        let mailLabelText = verificationModel.filtredMailArray[indexPath.row]
+        cell.cellConfigure(mailLabelText: mailLabelText)
         return cell
     }
 }
